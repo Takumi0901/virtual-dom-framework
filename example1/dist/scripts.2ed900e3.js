@@ -123,14 +123,13 @@ parcelRequire = (function (modules, cache, entry, globalName) {
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+exports.default = void 0;
 
-exports.default = function (tagName, _a) {
-  var _b = _a === void 0 ? {} : _a,
-      _c = _b.attrs,
-      attrs = _c === void 0 ? {} : _c,
-      _d = _b.children,
-      children = _d === void 0 ? [] : _d;
-
+var _default = function _default(tagName, _ref) {
+  var _ref$attrs = _ref.attrs,
+      attrs = _ref$attrs === void 0 ? {} : _ref$attrs,
+      _ref$children = _ref.children,
+      children = _ref$children === void 0 ? [] : _ref$children;
   var vElem = Object.create(null);
   Object.assign(vElem, {
     tagName: tagName,
@@ -139,34 +138,61 @@ exports.default = function (tagName, _a) {
   });
   return vElem;
 };
+
+exports.default = _default;
 },{}],"scripts/render.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+exports.default = void 0;
 
-var renderElem = function renderElem(_a) {
-  var tagName = _a.tagName,
-      attrs = _a.attrs,
-      children = _a.children; // create the element
+function _createForOfIteratorHelper(o) { if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (o = _unsupportedIterableToArray(o))) { var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e2) { throw _e2; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var it, normalCompletion = true, didErr = false, err; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e3) { didErr = true; err = _e3; }, f: function f() { try { if (!normalCompletion && it.return != null) it.return(); } finally { if (didErr) throw err; } } }; }
+
+function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
+
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
+function _iterableToArrayLimit(arr, i) { if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return; var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+
+function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
+var renderElem = function renderElem(_ref) {
+  var tagName = _ref.tagName,
+      attrs = _ref.attrs,
+      children = _ref.children;
+  // create the element
   //   e.g. <div></div>
-
   var $el = document.createElement(tagName); // add all attributs as specified in vNode.attrs
   //   e.g. <div id="app"></div>
 
-  for (var _i = 0, _b = Object.entries(attrs); _i < _b.length; _i++) {
-    var _c = _b[_i],
-        k = _c[0],
-        v = _c[1];
+  for (var _i = 0, _Object$entries = Object.entries(attrs); _i < _Object$entries.length; _i++) {
+    var _Object$entries$_i = _slicedToArray(_Object$entries[_i], 2),
+        k = _Object$entries$_i[0],
+        v = _Object$entries$_i[1];
+
     $el.setAttribute(k, v);
   } // append all children as specified in vNode.children
   //   e.g. <div id="app"><img></div>
 
 
-  for (var _d = 0, children_1 = children; _d < children_1.length; _d++) {
-    var child = children_1[_d];
-    $el.appendChild(render(child));
+  var _iterator = _createForOfIteratorHelper(children),
+      _step;
+
+  try {
+    for (_iterator.s(); !(_step = _iterator.n()).done;) {
+      var child = _step.value;
+      $el.appendChild(render(child));
+    }
+  } catch (err) {
+    _iterator.e(err);
+  } finally {
+    _iterator.f();
   }
 
   return $el;
@@ -181,21 +207,33 @@ var render = function render(vNode) {
   return renderElem(vNode);
 };
 
-exports.default = render;
+var _default = render;
+exports.default = _default;
 },{}],"scripts/diff.ts":[function(require,module,exports) {
 "use strict";
-
-var __importDefault = this && this.__importDefault || function (mod) {
-  return mod && mod.__esModule ? mod : {
-    "default": mod
-  };
-};
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+exports.default = void 0;
 
-var render_1 = __importDefault(require("./render"));
+var _render = _interopRequireDefault(require("./render"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _createForOfIteratorHelper(o) { if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (o = _unsupportedIterableToArray(o))) { var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e2) { throw _e2; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var it, normalCompletion = true, didErr = false, err; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e3) { didErr = true; err = _e3; }, f: function f() { try { if (!normalCompletion && it.return != null) it.return(); } finally { if (didErr) throw err; } } }; }
+
+function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
+
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
+function _iterableToArrayLimit(arr, i) { if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return; var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+
+function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
 var zip = function zip(xs, ys) {
   var zipped = [];
@@ -208,42 +246,50 @@ var zip = function zip(xs, ys) {
 };
 
 var diffAttrs = function diffAttrs(oldAttrs, newAttrs) {
-  var patches = [];
+  var patches = []; // setting newAttrs
 
-  var _loop_1 = function _loop_1(k, v) {
+  var _loop = function _loop() {
+    var _Object$entries$_i = _slicedToArray(_Object$entries[_i], 2),
+        k = _Object$entries$_i[0],
+        v = _Object$entries$_i[1];
+
     patches.push(function ($node) {
       $node.setAttribute(k, v);
       return $node;
     });
-  }; // setting newAttrs
+  };
+
+  for (var _i = 0, _Object$entries = Object.entries(newAttrs); _i < _Object$entries.length; _i++) {
+    _loop();
+  } // removing attrs
 
 
-  for (var _i = 0, _a = Object.entries(newAttrs); _i < _a.length; _i++) {
-    var _b = _a[_i],
-        k = _b[0],
-        v = _b[1];
-
-    _loop_1(k, v);
-  }
-
-  var _loop_2 = function _loop_2(k) {
+  var _loop2 = function _loop2(k) {
     if (!(k in newAttrs)) {
       patches.push(function ($node) {
         $node.removeAttribute(k);
         return $node;
       });
     }
-  }; // removing attrs
-
+  };
 
   for (var k in oldAttrs) {
-    _loop_2(k);
+    _loop2(k);
   }
 
   return function ($node) {
-    for (var _i = 0, patches_1 = patches; _i < patches_1.length; _i++) {
-      var patch = patches_1[_i];
-      patch($node);
+    var _iterator = _createForOfIteratorHelper(patches),
+        _step;
+
+    try {
+      for (_iterator.s(); !(_step = _iterator.n()).done;) {
+        var patch = _step.value;
+        patch($node);
+      }
+    } catch (err) {
+      _iterator.e(err);
+    } finally {
+      _iterator.f();
     }
 
     return $node;
@@ -257,32 +303,60 @@ var diffChildren = function diffChildren(oldVChildren, newVChildren) {
   });
   var additionalPatches = [];
 
-  var _loop_3 = function _loop_3(additionalVChild) {
-    additionalPatches.push(function ($node) {
-      $node.appendChild(render_1.default(additionalVChild));
-      return $node;
-    });
-  };
+  var _iterator2 = _createForOfIteratorHelper(newVChildren.slice(oldVChildren.length)),
+      _step2;
 
-  for (var _i = 0, _a = newVChildren.slice(oldVChildren.length); _i < _a.length; _i++) {
-    var additionalVChild = _a[_i];
+  try {
+    var _loop3 = function _loop3() {
+      var additionalVChild = _step2.value;
+      additionalPatches.push(function ($node) {
+        $node.appendChild((0, _render.default)(additionalVChild));
+        return $node;
+      });
+    };
 
-    _loop_3(additionalVChild);
+    for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
+      _loop3();
+    }
+  } catch (err) {
+    _iterator2.e(err);
+  } finally {
+    _iterator2.f();
   }
 
   return function ($parent) {
     // since childPatches are expecting the $child, not $parent,
     // we cannot just loop through them and call patch($parent)
-    for (var _i = 0, _a = zip(childPatches, $parent.childNodes); _i < _a.length; _i++) {
-      var _b = _a[_i],
-          patch = _b[0],
-          $child = _b[1];
-      patch($child);
+    var _iterator3 = _createForOfIteratorHelper(zip(childPatches, $parent.childNodes)),
+        _step3;
+
+    try {
+      for (_iterator3.s(); !(_step3 = _iterator3.n()).done;) {
+        var _step3$value = _slicedToArray(_step3.value, 2),
+            patch = _step3$value[0],
+            $child = _step3$value[1];
+
+        patch($child);
+      }
+    } catch (err) {
+      _iterator3.e(err);
+    } finally {
+      _iterator3.f();
     }
 
-    for (var _c = 0, additionalPatches_1 = additionalPatches; _c < additionalPatches_1.length; _c++) {
-      var patch = additionalPatches_1[_c];
-      patch($parent);
+    var _iterator4 = _createForOfIteratorHelper(additionalPatches),
+        _step4;
+
+    try {
+      for (_iterator4.s(); !(_step4 = _iterator4.n()).done;) {
+        var _patch = _step4.value;
+
+        _patch($parent);
+      }
+    } catch (err) {
+      _iterator4.e(err);
+    } finally {
+      _iterator4.f();
     }
 
     return $parent;
@@ -309,7 +383,7 @@ var diff = function diff(oldVTree, newVTree) {
       //    the other one is elem node
       // Either case, we will just render(newVTree)!
       return function ($node) {
-        var $newNode = render_1.default(newVTree);
+        var $newNode = (0, _render.default)(newVTree);
         $node.replaceWith($newNode);
         return $newNode;
       };
@@ -327,7 +401,7 @@ var diff = function diff(oldVTree, newVTree) {
     // will not attempt to find the differences.
     // simply render the newVTree and mount it.
     return function ($node) {
-      var $newNode = render_1.default(newVTree);
+      var $newNode = (0, _render.default)(newVTree);
       $node.replaceWith($newNode);
       return $newNode;
     };
@@ -342,74 +416,71 @@ var diff = function diff(oldVTree, newVTree) {
   };
 };
 
-exports.default = diff;
+var _default = diff;
+exports.default = _default;
 },{"./render":"scripts/render.ts"}],"scripts/index.ts":[function(require,module,exports) {
 "use strict";
-
-var __spreadArrays = this && this.__spreadArrays || function () {
-  for (var s = 0, i = 0, il = arguments.length; i < il; i++) {
-    s += arguments[i].length;
-  }
-
-  for (var r = Array(s), k = 0, i = 0; i < il; i++) {
-    for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++) {
-      r[k] = a[j];
-    }
-  }
-
-  return r;
-};
-
-var __importDefault = this && this.__importDefault || function (mod) {
-  return mod && mod.__esModule ? mod : {
-    "default": mod
-  };
-};
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+exports.mount = void 0;
 
-var createElement_1 = __importDefault(require("./createElement"));
+var _createElement = _interopRequireDefault(require("./createElement"));
 
-var render_1 = __importDefault(require("./render"));
+var _render = _interopRequireDefault(require("./render"));
 
-var diff_1 = __importDefault(require("./diff"));
+var _diff = _interopRequireDefault(require("./diff"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
+
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && Symbol.iterator in Object(iter)) return Array.from(iter); }
+
+function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToArray(arr); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
 
 var createVApp = function createVApp(count) {
-  return createElement_1.default("div", {
+  return (0, _createElement.default)("div", {
     attrs: {
       id: "app",
       dataCount: count
     },
-    children: __spreadArrays(["The current count is: ", String(count)], Array.from({
+    children: ["The current count is: ", String(count)].concat(_toConsumableArray(Array.from({
       length: count
     }, function () {
-      return createElement_1.default("img", {
+      return (0, _createElement.default)("img", {
         attrs: {
           src: "https://media.giphy.com/media/cuPm4p4pClZVC/giphy.gif"
         }
       });
-    }))
+    })))
   });
 };
 
-exports.mount = function ($node, $target) {
+var mount = function mount($node, $target) {
   $target.replaceWith($node);
   return $node;
 };
 
+exports.mount = mount;
 var count = 2;
-var vApp = createVApp(count);
-var $app = render_1.default(vApp);
-var $rootEl = exports.mount($app, document.getElementById("app"));
+var vApp = createVApp(0);
+var $app = (0, _render.default)(vApp);
+var $rootEl = mount($app, document.getElementById("app"));
 setInterval(function () {
   var n = Math.floor(Math.random() * 10);
   var vNewApp = createVApp(n);
-  var patch = diff_1.default(vApp, vNewApp);
+  var patch = (0, _diff.default)(vApp, vNewApp);
   $rootEl = patch($rootEl);
   vApp = vNewApp;
-}, 1000);
+}, 3000);
 },{"./createElement":"scripts/createElement.ts","./render":"scripts/render.ts","./diff":"scripts/diff.ts"}],"../node_modules/parcel/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
@@ -438,7 +509,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "50848" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "62626" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

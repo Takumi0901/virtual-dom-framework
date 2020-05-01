@@ -2,7 +2,7 @@ import createElement from "./createElement";
 import render from "./render";
 import diff from "./diff";
 
-const createVApp = (count) =>
+const createVApp = (count: number) =>
   createElement("div", {
     attrs: {
       id: "app",
@@ -21,13 +21,15 @@ const createVApp = (count) =>
     ],
   });
 
-export const mount = ($node, $target) => {
+export type TNode = Text | HTMLElement;
+
+export const mount = ($node: Text | HTMLElement, $target: HTMLElement) => {
   $target.replaceWith($node);
   return $node;
 };
 
 let count = 2;
-let vApp = createVApp(count);
+let vApp = createVApp(0);
 const $app = render(vApp);
 let $rootEl = mount($app, document.getElementById("app"));
 
@@ -39,4 +41,4 @@ setInterval(() => {
   $rootEl = patch($rootEl);
 
   vApp = vNewApp;
-}, 1000);
+}, 3000);

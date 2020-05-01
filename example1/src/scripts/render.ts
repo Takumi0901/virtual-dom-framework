@@ -1,4 +1,6 @@
-const renderElem = ({ tagName, attrs, children }) => {
+import { NodeType, VNode } from "./createElement";
+
+const renderElem = ({ tagName, attrs, children }: VNode) => {
   // create the element
   //   e.g. <div></div>
   const $el = document.createElement(tagName);
@@ -18,7 +20,7 @@ const renderElem = ({ tagName, attrs, children }) => {
   return $el;
 };
 
-const render = (vNode) => {
+const render = (vNode: NodeType) => {
   if (typeof vNode === "string") {
     return document.createTextNode(vNode);
   }
