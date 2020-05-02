@@ -1,23 +1,23 @@
-import { NodeType, VNode } from "./types";
+import { NodeType, VNode } from './types'
 
 const renderElem = ({ tagName, attrs, children }: VNode) => {
-  const $el = document.createElement(tagName);
+  const $el = document.createElement(tagName)
   for (const [k, v] of Object.entries(attrs)) {
-    $el.setAttribute(k, v);
+    $el.setAttribute(k, v)
   }
 
   for (const child of children) {
-    $el.appendChild(render(child));
+    $el.appendChild(render(child))
   }
 
-  return $el;
-};
+  return $el
+}
 
 const render = (vNode: NodeType) => {
-  if (typeof vNode === "string") {
-    return document.createTextNode(vNode);
+  if (typeof vNode === 'string') {
+    return document.createTextNode(vNode)
   }
-  return renderElem(vNode);
-};
+  return renderElem(vNode)
+}
 
-export default render;
+export default render

@@ -1,90 +1,87 @@
-import render from "./render";
-import { NodeType, Attributes } from "./types";
+import render from './render'
+import { NodeType, Attributes } from './types'
 
-const zip = (
-  xs: string | any[],
-  ys: string | any[] | NodeListOf<ChildNode>
-) => {
-  const zipped = [];
+const zip = (xs: string | any[], ys: string | any[] | NodeListOf<ChildNode>) => {
+  const zipped = []
   for (let i = 0; i < Math.min(xs.length, ys.length); i++) {
-    zipped.push([xs[i], ys[i]]);
+    zipped.push([xs[i], ys[i]])
   }
-  return zipped;
-};
+  return zipped
+}
 
 const diffAttrs = (oldAttrs: any, newAttrs: Attributes) => {
   const patches: {
-    ($node: HTMLElement): HTMLElement;
-    ($node: HTMLElement): HTMLElement;
-  }[] = [];
+    ($node: HTMLElement): HTMLElement
+    ($node: HTMLElement): HTMLElement
+  }[] = []
 
   // setting newAttrs
   for (const [k, v] of Object.entries(newAttrs)) {
     patches.push(($node: HTMLElement) => {
-      $node.setAttribute(k, v);
-      return $node;
-    });
+      $node.setAttribute(k, v)
+      return $node
+    })
   }
 
   // removing attrs
   for (const k in oldAttrs) {
     if (!(k in newAttrs)) {
       patches.push(($node: HTMLElement) => {
-        $node.removeAttribute(k);
-        return $node;
-      });
+        $node.removeAttribute(k)
+        return $node
+      })
     }
   }
 
   return ($node: HTMLElement) => {
     for (const patch of patches) {
-      patch($node);
+      patch($node)
     }
-    return $node;
-  };
-};
+    return $node
+  }
+}
 
 const diffChildren = (oldVChildren: NodeType[], newVChildren: NodeType[]) => {
-  const childPatches: (($node: HTMLElement) => any)[] = [];
+  const childPatches: (($node: HTMLElement) => any)[] = []
   oldVChildren.forEach((oldVChild, i) => {
-    childPatches.push(diff(oldVChild, newVChildren[i]));
-  });
+    childPatches.push(diff(oldVChild, newVChildren[i]))
+  })
 
-  const additionalPatches: (($node: HTMLElement) => any)[] = [];
+  const additionalPatches: (($node: HTMLElement) => any)[] = []
   for (const additionalVChild of newVChildren.slice(oldVChildren.length)) {
     additionalPatches.push(($node) => {
-      $node.appendChild(render(additionalVChild));
-      return $node;
-    });
+      $node.appendChild(render(additionalVChild))
+      return $node
+    })
   }
 
   return ($parent: HTMLElement) => {
     // since childPatches are expecting the $child, not $parent,
     // we cannot just loop through them and call patch($parent)
     for (const [patch, $child] of zip(childPatches, $parent.childNodes)) {
-      patch($child);
+      patch($child)
     }
 
     for (const patch of additionalPatches) {
-      patch($parent);
+      patch($parent)
     }
-    return $parent;
-  };
-};
+    return $parent
+  }
+}
 
 const diff = (oldVTree: NodeType, newVTree: NodeType) => {
   // let's assume oldVTree is not undefined!
   if (newVTree === undefined) {
     return ($node: HTMLElement): undefined => {
-      $node.remove();
+      $node.remove()
       // the patch should return the new root node.
       // since there is none in this case,
       // we will just return undefined.
-      return undefined;
-    };
+      return undefined
+    }
   }
 
-  if (typeof oldVTree === "string" || typeof newVTree === "string") {
+  if (typeof oldVTree === 'string' || typeof newVTree === 'string') {
     if (oldVTree !== newVTree) {
       // could be 2 cases:
       // 1. both trees are string and they have different values
@@ -92,14 +89,14 @@ const diff = (oldVTree: NodeType, newVTree: NodeType) => {
       //    the other one is elem node
       // Either case, we will just render(newVTree)!
       return ($node: Text | HTMLElement) => {
-        const $newNode = render(newVTree);
-        $node.replaceWith($newNode);
-        return $newNode;
-      };
+        const $newNode = render(newVTree)
+        $node.replaceWith($newNode)
+        return $newNode
+      }
     } else {
       // this means that both trees are string
       // and they have the same values
-      return ($node: HTMLElement) => $node;
+      return ($node: HTMLElement) => $node
     }
   }
 
@@ -108,20 +105,20 @@ const diff = (oldVTree: NodeType, newVTree: NodeType) => {
     // will not attempt to find the differences.
     // simply render the newVTree and mount it.
     return ($node: Text | HTMLElement) => {
-      const $newNode = render(newVTree);
-      $node.replaceWith($newNode);
-      return $newNode;
-    };
+      const $newNode = render(newVTree)
+      $node.replaceWith($newNode)
+      return $newNode
+    }
   }
 
-  const patchAttrs = diffAttrs(oldVTree.attrs, newVTree.attrs);
-  const patchChildren = diffChildren(oldVTree.children, newVTree.children);
+  const patchAttrs = diffAttrs(oldVTree.attrs, newVTree.attrs)
+  const patchChildren = diffChildren(oldVTree.children, newVTree.children)
 
   return ($node: HTMLElement) => {
-    patchAttrs($node);
-    patchChildren($node);
-    return $node;
-  };
-};
+    patchAttrs($node)
+    patchChildren($node)
+    return $node
+  }
+}
 
-export default diff;
+export default diff

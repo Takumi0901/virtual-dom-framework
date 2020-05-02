@@ -1,43 +1,43 @@
-import createElement from "./createElement";
-import render from "./render";
-import diff from "./diff";
-import { TNode } from "./types";
+import createElement from './createElement'
+import render from './render'
+import diff from './diff'
+import { TNode } from './types'
 
 const createVApp = (count: number) =>
-  createElement("div", {
+  createElement('div', {
     attrs: {
-      id: "app",
-      dataCount: count,
+      id: 'app',
+      dataCount: count
     },
     children: [
-      "The current count is: ",
+      'The current count is: ',
       String(count),
       ...Array.from({ length: count }, () =>
-        createElement("img", {
+        createElement('img', {
           attrs: {
-            src: "https://media.giphy.com/media/cuPm4p4pClZVC/giphy.gif",
-          },
+            src: 'https://media.giphy.com/media/cuPm4p4pClZVC/giphy.gif'
+          }
         })
-      ),
-    ],
-  });
+      )
+    ]
+  })
 
 export const mount = ($node: TNode, $target: HTMLElement) => {
-  $target.replaceWith($node);
-  return $node;
-};
+  $target.replaceWith($node)
+  return $node
+}
 
-let count = 2;
-let vApp = createVApp(0);
-const $app = render(vApp);
-let $rootEl = mount($app, document.getElementById("app"));
+let count = 2
+let vApp = createVApp(0)
+const $app = render(vApp)
+let $rootEl = mount($app, document.getElementById('app'))
 
 setInterval(() => {
-  const n = Math.floor(Math.random() * 10);
-  const vNewApp = createVApp(n);
-  const patch = diff(vApp, vNewApp);
+  const n = Math.floor(Math.random() * 10)
+  const vNewApp = createVApp(n)
+  const patch = diff(vApp, vNewApp)
 
-  $rootEl = patch($rootEl);
+  $rootEl = patch($rootEl)
 
-  vApp = vNewApp;
-}, 3000);
+  vApp = vNewApp
+}, 3000)

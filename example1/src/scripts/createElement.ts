@@ -1,16 +1,13 @@
-import { VNode } from "./types";
+import { VNode } from './types'
 
-export default (
-  tagName: keyof ElementTagNameMap,
-  { attrs = {}, children = [] }: VNode
-) => {
-  const vElem = Object.create(null);
+export default (tagName: keyof ElementTagNameMap, { attrs = {}, children = [] }: VNode) => {
+  const vElem = Object.create(null)
 
   Object.assign(vElem, {
     tagName,
     attrs,
-    children,
-  });
+    children
+  })
 
-  return vElem;
-};
+  return vElem
+}
