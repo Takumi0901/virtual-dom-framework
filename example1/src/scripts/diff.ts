@@ -1,5 +1,5 @@
 import render from "./render";
-import { NodeType } from "./createElement";
+import { NodeType, Attributes } from "./types";
 
 const zip = (
   xs: string | any[],
@@ -12,10 +12,7 @@ const zip = (
   return zipped;
 };
 
-const diffAttrs = (
-  oldAttrs: any,
-  newAttrs: { [s: string]: any } | ArrayLike<unknown>
-) => {
+const diffAttrs = (oldAttrs: any, newAttrs: Attributes) => {
   const patches: {
     ($node: HTMLElement): HTMLElement;
     ($node: HTMLElement): HTMLElement;

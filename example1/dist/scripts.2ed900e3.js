@@ -166,10 +166,7 @@ var renderElem = function renderElem(_ref) {
   var tagName = _ref.tagName,
       attrs = _ref.attrs,
       children = _ref.children;
-  // create the element
-  //   e.g. <div></div>
-  var $el = document.createElement(tagName); // add all attributs as specified in vNode.attrs
-  //   e.g. <div id="app"></div>
+  var $el = document.createElement(tagName);
 
   for (var _i = 0, _Object$entries = Object.entries(attrs); _i < _Object$entries.length; _i++) {
     var _Object$entries$_i = _slicedToArray(_Object$entries[_i], 2),
@@ -177,9 +174,7 @@ var renderElem = function renderElem(_ref) {
         v = _Object$entries$_i[1];
 
     $el.setAttribute(k, v);
-  } // append all children as specified in vNode.children
-  //   e.g. <div id="app"><img></div>
-
+  }
 
   var _iterator = _createForOfIteratorHelper(children),
       _step;
@@ -201,8 +196,7 @@ var renderElem = function renderElem(_ref) {
 var render = function render(vNode) {
   if (typeof vNode === "string") {
     return document.createTextNode(vNode);
-  } // we assume everything else to be a virtual element
-
+  }
 
   return renderElem(vNode);
 };

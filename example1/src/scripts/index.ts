@@ -1,6 +1,7 @@
 import createElement from "./createElement";
 import render from "./render";
 import diff from "./diff";
+import { TNode } from "./types";
 
 const createVApp = (count: number) =>
   createElement("div", {
@@ -21,9 +22,7 @@ const createVApp = (count: number) =>
     ],
   });
 
-export type TNode = Text | HTMLElement;
-
-export const mount = ($node: Text | HTMLElement, $target: HTMLElement) => {
+export const mount = ($node: TNode, $target: HTMLElement) => {
   $target.replaceWith($node);
   return $node;
 };
