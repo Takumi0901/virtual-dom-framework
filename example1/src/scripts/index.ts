@@ -3,6 +3,8 @@ import render from './render'
 import diff from './diff'
 import { TNode } from './types'
 
+var hoge = 1
+
 const createVApp = (count: number) =>
   createElement('div', {
     attrs: {
