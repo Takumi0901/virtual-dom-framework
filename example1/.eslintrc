@@ -13,5 +13,7 @@
     "sourceType": "module",
     "project": "./tsconfig.json"
   },
-  "rules": {}
+  "rules": {
+    "@typescript-eslint/no-use-before-define": "off"
+  }
 }

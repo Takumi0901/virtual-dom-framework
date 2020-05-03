@@ -1,7 +1,7 @@
 import render from './render'
 import { NodeType, Attributes } from './types'
 
-const zip = (xs: string | any[], ys: string | any[] | NodeListOf<ChildNode>) => {
+const zip = (xs: string | any[], ys: string | any[] | NodeListOf<ChildNode>): any => {
   const zipped = []
   for (let i = 0; i < Math.min(xs.length, ys.length); i++) {
     zipped.push([xs[i], ys[i]])
@@ -9,7 +9,7 @@ const zip = (xs: string | any[], ys: string | any[] | NodeListOf<ChildNode>) => 
   return zipped
 }
 
-const diffAttrs = (oldAttrs: any, newAttrs: Attributes) => {
+const diffAttrs = (oldAttrs: any, newAttrs: Attributes): (($node: HTMLElement) => HTMLElement) => {
   const patches: {
     ($node: HTMLElement): HTMLElement
     ($node: HTMLElement): HTMLElement
@@ -18,7 +18,12 @@ const diffAttrs = (oldAttrs: any, newAttrs: Attributes) => {
   // setting newAttrs
   for (const [k, v] of Object.entries(newAttrs)) {
     patches.push(($node: HTMLElement) => {
-      $node.setAttribute(k, v)
+      if (k === 'onclick') {
+        $node.addEventListener('click', v as EventListener)
+      } else {
+        $node.setAttribute(k, v)
+      }
+
       return $node
     })
   }
@@ -33,7 +38,7 @@ const diffAttrs = (oldAttrs: any, newAttrs: Attributes) => {
     }
   }
 
-  return ($node: HTMLElement) => {
+  return ($node: HTMLElement): HTMLElement => {
     for (const patch of patches) {
       patch($node)
     }
@@ -41,7 +46,7 @@ const diffAttrs = (oldAttrs: any, newAttrs: Attributes) => {
   }
 }
 
-const diffChildren = (oldVChildren: NodeType[], newVChildren: NodeType[]) => {
+const diffChildren = (oldVChildren: NodeType[], newVChildren: NodeType[]): any => {
   const childPatches: (($node: HTMLElement) => any)[] = []
   oldVChildren.forEach((oldVChild, i) => {
     childPatches.push(diff(oldVChild, newVChildren[i]))
@@ -55,7 +60,7 @@ const diffChildren = (oldVChildren: NodeType[], newVChildren: NodeType[]) => {
     })
   }
 
-  return ($parent: HTMLElement) => {
+  return ($parent: HTMLElement): HTMLElement => {
     // since childPatches are expecting the $child, not $parent,
     // we cannot just loop through them and call patch($parent)
     for (const [patch, $child] of zip(childPatches, $parent.childNodes)) {
@@ -69,7 +74,7 @@ const diffChildren = (oldVChildren: NodeType[], newVChildren: NodeType[]) => {
   }
 }
 
-const diff = (oldVTree: NodeType, newVTree: NodeType) => {
+const diff = (oldVTree: NodeType, newVTree: NodeType): (($node: Text | HTMLElement) => Text | HTMLElement) => {
   // let's assume oldVTree is not undefined!
   if (newVTree === undefined) {
     return ($node: HTMLElement): undefined => {
@@ -88,7 +93,7 @@ const diff = (oldVTree: NodeType, newVTree: NodeType) => {
       // 2. one of the trees is text node and
       //    the other one is elem node
       // Either case, we will just render(newVTree)!
-      return ($node: Text | HTMLElement) => {
+      return ($node: Text | HTMLElement): Text | HTMLElement => {
         const $newNode = render(newVTree)
         $node.replaceWith($newNode)
         return $newNode
@@ -96,7 +101,7 @@ const diff = (oldVTree: NodeType, newVTree: NodeType) => {
     } else {
       // this means that both trees are string
       // and they have the same values
-      return ($node: HTMLElement) => $node
+      return ($node: HTMLElement): HTMLElement => $node
     }
   }
 
@@ -104,7 +109,7 @@ const diff = (oldVTree: NodeType, newVTree: NodeType) => {
     // we assume that they are totally different and
     // will not attempt to find the differences.
     // simply render the newVTree and mount it.
-    return ($node: Text | HTMLElement) => {
+    return ($node: Text | HTMLElement): Text | HTMLElement => {
       const $newNode = render(newVTree)
       $node.replaceWith($newNode)
       return $newNode
@@ -114,7 +119,7 @@ const diff = (oldVTree: NodeType, newVTree: NodeType) => {
   const patchAttrs = diffAttrs(oldVTree.attrs, newVTree.attrs)
   const patchChildren = diffChildren(oldVTree.children, newVTree.children)
 
-  return ($node: HTMLElement) => {
+  return ($node: HTMLElement): HTMLElement => {
     patchAttrs($node)
     patchChildren($node)
     return $node

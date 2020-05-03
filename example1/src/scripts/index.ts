@@ -1,45 +1,114 @@
 import createElement from './createElement'
 import render from './render'
 import diff from './diff'
-import { TNode } from './types'
+import { VNode } from './types'
+import { mount } from './mount'
 
-var hoge = 1
+const state = 1
 
-const createVApp = (count: number) =>
-  createElement('div', {
+const actions: any = {
+  countUp(count: any) {
+    return count + 1
+  }
+}
+
+const createVApp = (count: number, action: any): VNode => {
+  return createElement('div', {
     attrs: {
       id: 'app',
       dataCount: count
     },
     children: [
-      'The current count is: ',
-      String(count),
-      ...Array.from({ length: count }, () =>
-        createElement('img', {
-          attrs: {
-            src: 'https://media.giphy.com/media/cuPm4p4pClZVC/giphy.gif'
+      createElement('button', {
+        attrs: {
+          type: 'button',
+          onclick: () => {
+            action.countUp(count)
           }
-        })
-      )
+        },
+        children: ['hgehoghoeg']
+      }),
+      String(count)
+      // ...Array.from({ length: count }, () =>
+      //   createElement('img', {
+      //     attrs: {
+      //       src: 'https://media.giphy.com/media/cuPm4p4pClZVC/giphy.gif'
+      //     }
+      //   })
+      // )
     ]
   })
-
-export const mount = ($node: TNode, $target: HTMLElement) => {
-  $target.replaceWith($node)
-  return $node
 }
 
-let count = 2
-let vApp = createVApp(0)
-const $app = render(vApp)
-let $rootEl = mount($app, document.getElementById('app'))
+export class App {
+  private readonly el: HTMLElement
+  private readonly view: any
+  private state: any
+  private readonly actions: any
+  private skipRender: boolean
+  private oldNode: any
+  /** 仮想DOM（変更後用） */
+  private newNode: any
+  private eel: any
 
-setInterval(() => {
-  const n = Math.floor(Math.random() * 10)
-  const vNewApp = createVApp(n)
-  const patch = diff(vApp, vNewApp)
+  constructor(params: { el: any; view: any; state: any; actions: any }) {
+    this.el = typeof params.el === 'string' ? document.querySelector(params.el) : params.el
+    this.view = params.view
+    this.newNode = this.view(this.state, this.actions)
+    this.state = params.state
+    this.actions = this.dispatchAction(params.actions)
+    // this.mountf()
+    this.resolveNode()
+  }
 
-  $rootEl = patch($rootEl)
+  private dispatchAction(actions: any): any {
+    const dispatched: any = {}
 
-  vApp = vNewApp
-}, 3000)
+    for (const key in actions) {
+      const action = actions[key]
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      dispatched[key] = (state: any, ...data: any): any => {
+        const ret = action(state)
+        this.state = ret
+        this.resolveNode()
+        return ret
+      }
+    }
+
+    return dispatched as any
+  }
+
+  private resolveNode(): void {
+    this.newNode = this.view(this.state, this.actions)
+    this.scheduleRender()
+  }
+
+  private scheduleRender(): void {
+    if (!this.skipRender) {
+      this.skipRender = true
+      setTimeout(this.render.bind(this))
+    }
+  }
+
+  private render(): void {
+    if (this.oldNode) {
+      const patch = diff(this.oldNode, this.newNode)
+      this.eel = patch(this.eel)
+      mount(this.eel, this.el)
+    } else {
+      const patch = diff(this.newNode, this.newNode)
+      this.eel = patch(render(this.newNode))
+      mount(this.eel, this.el)
+    }
+
+    this.oldNode = this.newNode
+    this.skipRender = false
+  }
+}
+
+new App({
+  el: '#app',
+  view: createVApp,
+  state,
+  actions
+})
