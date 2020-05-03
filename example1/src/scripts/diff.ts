@@ -15,7 +15,6 @@ const diffAttrs = (oldAttrs: any, newAttrs: Attributes): (($node: HTMLElement) =
     ($node: HTMLElement): HTMLElement
   }[] = []
 
-  // setting newAttrs
   for (const [k, v] of Object.entries(newAttrs)) {
     patches.push(($node: HTMLElement) => {
       if (k === 'onclick') {
@@ -28,7 +27,6 @@ const diffAttrs = (oldAttrs: any, newAttrs: Attributes): (($node: HTMLElement) =
     })
   }
 
-  // removing attrs
   for (const k in oldAttrs) {
     if (!(k in newAttrs)) {
       patches.push(($node: HTMLElement) => {
@@ -61,8 +59,6 @@ const diffChildren = (oldVChildren: NodeType[], newVChildren: NodeType[]): any =
   }
 
   return ($parent: HTMLElement): HTMLElement => {
-    // since childPatches are expecting the $child, not $parent,
-    // we cannot just loop through them and call patch($parent)
     for (const [patch, $child] of zip(childPatches, $parent.childNodes)) {
       patch($child)
     }
@@ -74,50 +70,38 @@ const diffChildren = (oldVChildren: NodeType[], newVChildren: NodeType[]): any =
   }
 }
 
-const diff = (oldVTree: NodeType, newVTree: NodeType): (($node: Text | HTMLElement) => Text | HTMLElement) => {
-  // let's assume oldVTree is not undefined!
-  if (newVTree === undefined) {
+const diff = (oldVTree: NodeType, newVTree?: NodeType): (($node: Text | HTMLElement) => Text | HTMLElement) => {
+  const upd = newVTree || oldVTree
+
+  if (upd === undefined) {
     return ($node: HTMLElement): undefined => {
       $node.remove()
-      // the patch should return the new root node.
-      // since there is none in this case,
-      // we will just return undefined.
       return undefined
     }
   }
 
-  if (typeof oldVTree === 'string' || typeof newVTree === 'string') {
-    if (oldVTree !== newVTree) {
-      // could be 2 cases:
-      // 1. both trees are string and they have different values
-      // 2. one of the trees is text node and
-      //    the other one is elem node
-      // Either case, we will just render(newVTree)!
+  if (typeof oldVTree === 'string' || typeof upd === 'string') {
+    if (oldVTree !== upd) {
       return ($node: Text | HTMLElement): Text | HTMLElement => {
-        const $newNode = render(newVTree)
+        const $newNode = render(upd)
         $node.replaceWith($newNode)
         return $newNode
       }
     } else {
-      // this means that both trees are string
-      // and they have the same values
       return ($node: HTMLElement): HTMLElement => $node
     }
   }
 
-  if (oldVTree.tagName !== newVTree.tagName) {
-    // we assume that they are totally different and
-    // will not attempt to find the differences.
-    // simply render the newVTree and mount it.
+  if (oldVTree.tagName !== upd.tagName) {
     return ($node: Text | HTMLElement): Text | HTMLElement => {
-      const $newNode = render(newVTree)
+      const $newNode = render(upd)
       $node.replaceWith($newNode)
       return $newNode
     }
   }
 
-  const patchAttrs = diffAttrs(oldVTree.attrs, newVTree.attrs)
-  const patchChildren = diffChildren(oldVTree.children, newVTree.children)
+  const patchAttrs = diffAttrs(oldVTree.attrs, upd.attrs)
+  const patchChildren = diffChildren(oldVTree.children, upd.children)
 
   return ($node: HTMLElement): HTMLElement => {
     patchAttrs($node)
