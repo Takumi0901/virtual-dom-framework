@@ -54,7 +54,10 @@ const view: View<State, Actions> = (state, action): VNode => {
         children: ['change']
       }),
       String(state?.count),
-      String(state?.text)
+      createElement('p', {
+        attrs: {},
+        children: [state?.text]
+      })
       // ...Array.from({ length: count }, () =>
       //   createElement('img', {
       //     attrs: {

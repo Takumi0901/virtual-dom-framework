@@ -9,7 +9,7 @@ const zip = (xs: string | any[], ys: string | any[] | NodeListOf<ChildNode>): an
   return zipped
 }
 
-const diffAttrs = (oldAttrs: any, newAttrs: Attributes): (($node: HTMLElement) => HTMLElement) => {
+const updateAttrs = (oldAttrs: Attributes, newAttrs: Attributes): (($node: HTMLElement) => HTMLElement) => {
   const patches: {
     ($node: HTMLElement): HTMLElement
     ($node: HTMLElement): HTMLElement
@@ -44,10 +44,10 @@ const diffAttrs = (oldAttrs: any, newAttrs: Attributes): (($node: HTMLElement) =
   }
 }
 
-const diffChildren = (oldVChildren: NodeType[], newVChildren: NodeType[]): any => {
+const updateChildren = (oldVChildren: NodeType[], newVChildren: NodeType[]): any => {
   const childPatches: (($node: HTMLElement) => any)[] = []
   oldVChildren.forEach((oldVChild, i) => {
-    childPatches.push(diff(oldVChild, newVChildren[i]))
+    childPatches.push(updateElement(oldVChild, newVChildren[i]))
   })
 
   const additionalPatches: (($node: HTMLElement) => any)[] = []
@@ -70,7 +70,10 @@ const diffChildren = (oldVChildren: NodeType[], newVChildren: NodeType[]): any =
   }
 }
 
-const diff = (oldVTree: NodeType, newVTree?: NodeType): (($node: Text | HTMLElement) => Text | HTMLElement) => {
+const updateElement = (
+  oldVTree: NodeType,
+  newVTree?: NodeType
+): (($node: Text | HTMLElement) => Text | HTMLElement) => {
   const upd = newVTree || oldVTree
 
   if (upd === undefined) {
@@ -100,8 +103,8 @@ const diff = (oldVTree: NodeType, newVTree?: NodeType): (($node: Text | HTMLElem
     }
   }
 
-  const patchAttrs = diffAttrs(oldVTree.attrs, upd.attrs)
-  const patchChildren = diffChildren(oldVTree.children, upd.children)
+  const patchAttrs = updateAttrs(oldVTree.attrs, upd.attrs)
+  const patchChildren = updateChildren(oldVTree.children, upd.children)
 
   return ($node: HTMLElement): HTMLElement => {
     patchAttrs($node)
@@ -110,4 +113,4 @@ const diff = (oldVTree: NodeType, newVTree?: NodeType): (($node: Text | HTMLElem
   }
 }
 
-export default diff
+export default updateElement

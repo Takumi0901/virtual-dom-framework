@@ -1,10 +1,10 @@
-import diff from './diff'
+import updateElement from './updateElement'
 import render from './render'
 import { mount } from './mount'
 import { VNode } from './types'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type ActionType<State> = (state: State, ...data: any) => void | any
+export type ActionType<State> = (state: State) => void | any
 
 export interface ActionTree<State> {
   [action: string]: ActionType<State>
@@ -33,7 +33,7 @@ export class App<State, Actions extends ActionTree<State>> {
   private skipRender: boolean
   private oldNode: VNode
   private newNode: VNode
-  private eel: HTMLElement | Text
+  private rootElement: HTMLElement | Text
 
   constructor(params: AppConstructor<State, Actions>) {
     this.el = typeof params.el === 'string' ? document.querySelector(params.el) : params.el
@@ -73,13 +73,13 @@ export class App<State, Actions extends ActionTree<State>> {
 
   private render(): void {
     if (this.oldNode) {
-      const patch = diff(this.oldNode, this.newNode)
-      this.eel = patch(this.eel)
+      const patch = updateElement(this.oldNode, this.newNode)
+      this.rootElement = patch(this.rootElement)
     } else {
-      const patch = diff(this.newNode)
-      this.eel = patch(render(this.newNode))
+      const patch = updateElement(this.newNode)
+      this.rootElement = patch(render(this.newNode))
     }
-    mount(this.eel, this.el)
+    mount(this.rootElement, this.el)
 
     this.oldNode = this.newNode
     this.skipRender = false
